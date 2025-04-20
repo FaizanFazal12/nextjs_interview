@@ -30,7 +30,6 @@ export const step2Schema = z.object({
     .regex(/^\+923[0-4][0-9]{8}$/, 'Phone Number must be a valid Pakistan number (e.g., +923001234567)'),
   alternatePhoneNumber: z
     .string()
-    .regex(/^\+923[0-4][0-9]{8}$/, 'Alternate Phone Number must be a valid Pakistan number')
     .optional(),
   addressLine1: z.string().min(1, 'Address Line 1 is required'),
   addressLine2: z.string().optional(),
