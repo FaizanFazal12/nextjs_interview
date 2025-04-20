@@ -90,7 +90,7 @@ export default function MultiStepForm() {
         title: 'Submission Successful',
         description: 'Your form has been submitted successfully.',
       });
-      router.push('/submissions');
+      router.push('/');
     } catch (error) {
       toast({
         title: 'Submission Failed',

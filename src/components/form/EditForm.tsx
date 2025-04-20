@@ -47,7 +47,6 @@ export default function EditForm({ id }: EditFormProps) {
 
     const [isStepValid, setIsStepValid] = useState<boolean[]>(Array(6).fill(false));
 
-    // Pre-populate form with submission data
     useEffect(() => {
         if (data) {
             const { form: submission } = data;
@@ -57,7 +56,7 @@ export default function EditForm({ id }: EditFormProps) {
                 personal: { ...mutableSubmission.personal, confirmPassword: '' },
                 contact: {
                     phoneNumber: mutableSubmission.contact.phoneNumber,
-                    alternatePhoneNumber: mutableSubmission.contact.alternatePhoneNumber || '',
+                    alternatePhoneNumber: mutableSubmission.contact.alternatePhoneNumber,
                     addressLine1: mutableSubmission.contact.addressLine1,
                     addressLine2: mutableSubmission.contact.addressLine2 || '',
                     city: mutableSubmission.contact.city,
@@ -131,12 +130,13 @@ export default function EditForm({ id }: EditFormProps) {
 
         try {
             await updateSubmission({ id, data: { ...formDataPayload, resumeFile } }).unwrap();
-            dispatch(resetForm());
             toast({
                 title: 'Update Successful',
                 description: 'Your submission has been updated successfully.',
             });
-            router.push('/submissions');
+            router.push('/');
+            dispatch(resetForm());
+
         } catch (error) {
             toast({
                 title: 'Update Failed',

@@ -30,12 +30,14 @@ export const submissionsApi = createApi({
       invalidatesTags: ['Forms'],
     }),
     updateSubmission: builder.mutation<getFormData, { id: string; data: Partial<FormData> & { resumeFile?: File | null } }>({
-      query: ({ id, data }) => {
+      query: ({ id,  data }) => {
         const formData = new FormData();
-        formData.append('data', JSON.stringify(data)); 
-        if (data.resumeFile) {
-          formData.append('resume', data.resumeFile);
+        const { resumeFile ,...body} = data;
+        formData.append('data', JSON.stringify(body));
+        if (resumeFile) {
+          formData.append('resume', resumeFile);
         }
+  
         return {
           url: `/form/${id}`,
           method: 'PATCH',

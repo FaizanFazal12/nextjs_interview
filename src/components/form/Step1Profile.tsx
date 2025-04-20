@@ -5,6 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 
 export default function Step1Profile() {
   const { control } = useFormContext();
+  const gender = ['Male', 'Female', 'Other']
 
   return (
     <div className="space-y-4">
@@ -60,6 +61,8 @@ export default function Step1Profile() {
           </FormItem>
         )}
       />
+
+
       <FormField
         control={control}
         name="personal.gender"
@@ -70,12 +73,15 @@ export default function Step1Profile() {
               <FormControl>
                 <SelectTrigger>
                   <SelectValue placeholder="Select gender" />
+
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
-                <SelectItem value="Male">Male</SelectItem>
-                <SelectItem value="Female">Female</SelectItem>
-                <SelectItem value="Other">Other</SelectItem>
+                {gender.map((gender) => (
+                  <SelectItem key={gender} value={gender}>
+                    {gender}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
             <FormMessage />
