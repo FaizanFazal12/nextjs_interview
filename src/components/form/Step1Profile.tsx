@@ -2,10 +2,19 @@ import { useFormContext } from 'react-hook-form';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import gender from '@/lib/data/gender.json';
+import { useEffect } from 'react';
 
 export default function Step1Profile() {
-  const { control } = useFormContext();
-  const gender = ['Male', 'Female', 'Other']
+  const { control, setValue } = useFormContext();
+  // useEffect(() => {
+  //   if (control._formValues.personal?.gender) {
+  //     setValue('personal.gender', "Male");
+  //     console.log('Set personal.gender to "Male"');
+  //   }
+  //   console.log(control._formValues.personal?.gender);
+  // }, [control, setValue ,control._formValues.personal?.gender])
+
 
   return (
     <div className="space-y-4">
@@ -31,6 +40,34 @@ export default function Step1Profile() {
             <FormControl>
               <Input type="email" {...field} />
             </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        control={control}
+        name="personal.gender"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Gender</FormLabel>
+            <Select
+              onValueChange={field.onChange}
+              value={field?.value || 'Male'}
+            >
+              <FormControl>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select gender" />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                {gender.map((ele) => (
+                  <SelectItem key={ele} value={ele}>
+                    {ele}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             <FormMessage />
           </FormItem>
         )}
@@ -62,32 +99,6 @@ export default function Step1Profile() {
         )}
       />
 
-
-      <FormField
-        control={control}
-        name="personal.gender"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Gender</FormLabel>
-            <Select onValueChange={field.onChange} defaultValue={field.value}>
-              <FormControl>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select gender" />
-
-                </SelectTrigger>
-              </FormControl>
-              <SelectContent>
-                {gender.map((gender) => (
-                  <SelectItem key={gender} value={gender}>
-                    {gender}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
       <FormField
         control={control}
         name="personal.dateOfBirth"

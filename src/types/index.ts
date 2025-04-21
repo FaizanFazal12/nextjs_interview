@@ -5,7 +5,7 @@ export interface FormData {
       email: string;
       password: string;
       confirmPassword: string;
-      gender: 'Male' | 'Female' | 'Other';
+      gender: string;
       dateOfBirth: string; 
     };
     contact: {

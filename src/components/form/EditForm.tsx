@@ -37,6 +37,7 @@ export default function EditForm({ id }: EditFormProps) {
     const router = useRouter();
     const { toast } = useToast();
     const currentStep = useSelector((state: RootState) => state.form.currentStep);
+    // const currentStep = 3
     const { data, isLoading, error } = useGetSubmissionByIdQuery(id);
     const [updateSubmission, { isLoading: isUpdating }] = useUpdateSubmissionMutation();
 
@@ -49,28 +50,28 @@ export default function EditForm({ id }: EditFormProps) {
 
     useEffect(() => {
         if (data) {
-            const { form: submission } = data;
-            // Create a mutable deep copy to avoid frozen objects
-            const mutableSubmission = JSON.parse(JSON.stringify(submission));
-            const formData = {
-                personal: { ...mutableSubmission.personal, confirmPassword: '' },
-                contact: {
-                    phoneNumber: mutableSubmission.contact.phoneNumber,
-                    alternatePhoneNumber: mutableSubmission.contact.alternatePhoneNumber,
-                    addressLine1: mutableSubmission.contact.addressLine1,
-                    addressLine2: mutableSubmission.contact.addressLine2 || '',
-                    city: mutableSubmission.contact.city,
-                    postalCode: mutableSubmission.contact.postalCode,
-                    country: mutableSubmission.contact.country,
-                },
-                employment: { ...mutableSubmission.employment, resume: undefined },
-                financial: { ...mutableSubmission.financial },
-                preferences: { ...mutableSubmission.preferences },
-            };
-            methods.reset(formData);
-            dispatch(updateFormData(formData));
+          const { form: submission } = data;
+          const mutableSubmission = JSON.parse(JSON.stringify(submission));
+          console.log(mutableSubmission)
+          const formData = {
+            personal: { ...mutableSubmission.personal, confirmPassword: '' },
+            contact: {
+              phoneNumber: mutableSubmission.contact.phoneNumber,
+              alternatePhoneNumber: mutableSubmission.contact.alternatePhoneNumber || '',
+              addressLine1: mutableSubmission.contact.addressLine1,
+              addressLine2: mutableSubmission.contact.addressLine2 || '',
+              city: mutableSubmission.contact.city,
+              postalCode: mutableSubmission.contact.postalCode,
+              country: mutableSubmission.contact.country,
+            },
+            employment: { ...mutableSubmission.employment, },
+            financial: { ...mutableSubmission.financial },
+            preferences: { ...mutableSubmission.preferences },
+          };
+          methods.reset(formData);
+          dispatch(updateFormData(formData));
         }
-    }, [data, methods, dispatch]);
+      }, [data, methods, dispatch ]);
 
     const handleNext = async () => {
         const fieldsToValidate = stepFields[currentStep];
@@ -108,15 +109,15 @@ export default function EditForm({ id }: EditFormProps) {
     };
 
     const handleSubmit = async (data: FormData) => {
-        const isValid = await methods.trigger();
-        if (!isValid) {
-            toast({
-                title: 'Validation Error',
-                description: 'Please complete all required fields correctly.',
-                variant: 'destructive',
-            });
-            return;
-        }
+        // const isValid = await methods.trigger();
+        // if (!isValid) {
+        //     toast({
+        //         title: 'Validation Error',
+        //         description: 'Please complete all required fields correctly.',
+        //         variant: 'destructive',
+        //     });
+        //     return;
+        // }
 
         const formDataPayload = {
             personal: { ...data.personal },

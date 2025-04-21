@@ -14,9 +14,7 @@ export const step1Schema = z
         'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character'
       ),
     confirmPassword: z.string(),
-    gender: z.enum(['Male', 'Female', 'Other'], {
-      errorMap: () => ({ message: 'Gender is required' }),
-    }),
+    gender: z.string().min(1, 'Gender is Required'),
     dateOfBirth: z.string().min(1, 'Date of Birth is required'),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -45,17 +43,32 @@ export const step3Schema = z
       errorMap: () => ({ message: 'Employment Status is required' }),
     }),
     companyName: z.string().optional(),
-    yearsOfExperience: z.number().min(0, 'Years of Experience cannot be negative'),
+    yearsOfExperience: z
+      .number({ invalid_type_error: 'Years of Experience is required' })
+      .min(0, 'Years of Experience cannot be negative'),
     resume: z
       .any()
-      .refine((file) => file instanceof File, 'Resume is required')
       .refine(
-        (file) => file && file.size <= 5 * 1024 * 1024,
-        'Resume must be less than 5MB'
+        (file) => {
+          if (!file || typeof file === 'string') return true;
+
+          return file instanceof File;
+        },
+        { message: 'Resume is required' }
       )
       .refine(
-        (file) => file && ['application/pdf'].includes(file.type),
-        'Resume must be a PDF'
+        (file) => {
+          if (!file || typeof file === 'string') return true;
+          return file.size <= 5 * 1024 * 1024;
+        },
+        { message: 'Resume must be less than 5MB' }
+      )
+      .refine(
+        (file) => {
+          if (!file || typeof file === 'string') return true;
+          return file.type === 'application/pdf';
+        },
+        { message: 'Resume must be a PDF' }
       ),
   })
   .refine(

@@ -1,11 +1,16 @@
+'use client';
+
 import { useFormContext } from 'react-hook-form';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import Link from 'next/link';
 
 export default function Step3Employment() {
   const { control, watch } = useFormContext();
   const employmentStatus = watch('employment.employmentStatus');
+  const existingResumeUrl = watch('employment.resume'); 
+  // console.log('control' ,control._fields)
 
   return (
     <div className="space-y-4">
@@ -76,12 +81,22 @@ export default function Step3Employment() {
           </FormItem>
         )}
       />
+
+      {existingResumeUrl && (
+        <div className="text-sm text-muted-foreground">
+          <span>Current Resume:&nbsp;</span>
+          <Link href={existingResumeUrl} target="_blank" className="text-blue-500 underline">
+            View PDF
+          </Link>
+        </div>
+      )}
+
       <FormField
         control={control}
         name="employment.resume"
         render={({ field: { onChange, value, ...field } }) => (
           <FormItem>
-            <FormLabel>Resume Upload</FormLabel>
+            <FormLabel>{existingResumeUrl ? 'Replace Resume (PDF)' : 'Upload Resume (PDF)'}</FormLabel>
             <FormControl>
               <Input
                 type="file"
