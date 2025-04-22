@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import type  { GetAllFormData ,getFormData } from '../../../types';
+import type  { GetAllFormData ,getFormData ,FormData } from '../../../types';
 
 export const submissionsApi = createApi({
   reducerPath: 'submissionsApi',
@@ -44,7 +44,6 @@ export const submissionsApi = createApi({
           body: formData,
         };
       },
-      invalidatesTags: ['Forms'],
     }),
     deleteSubmission: builder.mutation<void, string>({
       query: (id) => ({

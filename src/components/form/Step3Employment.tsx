@@ -1,16 +1,46 @@
 'use client';
 
 import { useFormContext } from 'react-hook-form';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
+} from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 export default function Step3Employment() {
-  const { control, watch } = useFormContext();
+  const { control, watch, setValue } = useFormContext();
   const employmentStatus = watch('employment.employmentStatus');
-  const existingResumeUrl = watch('employment.resume'); 
-  // console.log('control' ,control._fields)
+  const existingResumeUrl = watch('employment.resume');
+
+  const [previewResumeUrl, setPreviewResumeUrl] = useState<string | null>(null);
+
+  const handleResumeChange = (file: File | undefined) => {
+    if (file) {
+      const tempUrl = URL.createObjectURL(file);
+      setPreviewResumeUrl(tempUrl);
+      setValue('employment.resume', file);
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      // Cleanup preview URL when component unmounts
+      if (previewResumeUrl) URL.revokeObjectURL(previewResumeUrl);
+    };
+  }, [previewResumeUrl]);
 
   return (
     <div className="space-y-4">
@@ -27,6 +57,7 @@ export default function Step3Employment() {
           </FormItem>
         )}
       />
+
       <FormField
         control={control}
         name="employment.employmentStatus"
@@ -49,6 +80,7 @@ export default function Step3Employment() {
           </FormItem>
         )}
       />
+
       {employmentStatus === 'Employed' && (
         <FormField
           control={control}
@@ -64,6 +96,7 @@ export default function Step3Employment() {
           )}
         />
       )}
+
       <FormField
         control={control}
         name="employment.yearsOfExperience"
@@ -82,10 +115,23 @@ export default function Step3Employment() {
         )}
       />
 
-      {existingResumeUrl && (
+      {(existingResumeUrl && typeof existingResumeUrl === 'string') && (
         <div className="text-sm text-muted-foreground">
           <span>Current Resume:&nbsp;</span>
-          <Link href={existingResumeUrl} target="_blank" className="text-blue-500 underline">
+          <Link
+            href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/${existingResumeUrl}`}
+            target="_blank"
+            className="text-blue-500 underline"
+          >
+            View PDF
+          </Link>
+        </div>
+      )}
+
+      {previewResumeUrl && (
+        <div className="text-sm text-muted-foreground">
+          <span>Selected Resume Preview:&nbsp;</span>
+          <Link href={previewResumeUrl} target="_blank" className="text-blue-500 underline">
             View PDF
           </Link>
         </div>
@@ -94,15 +140,16 @@ export default function Step3Employment() {
       <FormField
         control={control}
         name="employment.resume"
-        render={({ field: { onChange, value, ...field } }) => (
+        render={({ field }) => (
           <FormItem>
-            <FormLabel>{existingResumeUrl ? 'Replace Resume (PDF)' : 'Upload Resume (PDF)'}</FormLabel>
+            <FormLabel>
+              {existingResumeUrl ? 'Replace Resume (PDF)' : 'Upload Resume (PDF)'}
+            </FormLabel>
             <FormControl>
               <Input
                 type="file"
                 accept="application/pdf"
-                onChange={(e) => onChange(e.target.files?.[0])}
-                {...field}
+                onChange={(e) => handleResumeChange(e.target.files?.[0])}
               />
             </FormControl>
             <FormMessage />
