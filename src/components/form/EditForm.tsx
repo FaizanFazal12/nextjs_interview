@@ -52,7 +52,6 @@ export default function EditForm({ id }: EditFormProps) {
         if (data) {
           const { form: submission } = data;
           const mutableSubmission = JSON.parse(JSON.stringify(submission));
-          console.log(mutableSubmission)
           const formData = {
             personal: { ...mutableSubmission.personal, confirmPassword: '' },
             contact: {
@@ -122,12 +121,14 @@ export default function EditForm({ id }: EditFormProps) {
         const formDataPayload = {
             personal: { ...data.personal },
             contact: { ...data.contact },
-            employment: { ...data.employment, resume: undefined },
+            employment: { ...data.employment },
             financial: { ...data.financial },
             preferences: { ...data.preferences },
         };
 
-        const resumeFile = data.employment.resume instanceof File ? data.employment.resume : null;
+        console.log('formDataPayload' ,formDataPayload)
+
+        const resumeFile = data.employment.resume instanceof File    ? data.employment.resume : null;
 
         try {
             await updateSubmission({ id, data: { ...formDataPayload, resumeFile } }).unwrap();
